@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Duel Arena</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>DUEL <span>ARENA</span></h1>
+      <span id="connection" class="conn">接続中…</span>
+    </header>
+
+    <!-- HUD: 左が常に自分、右が相手 -->
+    <section class="hud">
+      <div class="player left">
+        <div class="name"><span class="label">あなた</span><span class="tag" id="tag-you"></span></div>
+        <div class="bar hp"><div class="fill" id="hp-you"></div><span class="num" id="hp-you-num">100</span></div>
+        <div class="bar guard"><div class="fill" id="guard-you"></div></div>
+      </div>
+
+      <div class="vs">VS</div>
+
+      <div class="player right">
+        <div class="name"><span class="tag" id="tag-opponent"></span><span class="label">相手</span></div>
+        <div class="bar hp"><div class="fill" id="hp-opponent"></div><span class="num" id="hp-opponent-num">100</span></div>
+        <div class="bar guard"><div class="fill" id="guard-opponent"></div></div>
+      </div>
+    </section>
+
+    <section class="stage">
+      <canvas id="arena" width="960" height="420"></canvas>
+      <div id="banner" class="banner"></div>
+
+      <div id="overlay" class="overlay">
+        <h2 id="overlay-title">接続中…</h2>
+        <p id="overlay-sub"></p>
+        <button id="overlay-btn" type="button" hidden>もう一度対戦</button>
+      </div>
+    </section>
+
+    <section id="controls" class="controls"></section>
+
+    <p class="help">
+      <b>J</b> / <b>Z</b> 攻撃（0.2秒後に判定・0.3秒硬直）　
+      <b>K</b> / <b>X</b> ガード（長押し）　
+      <b>L</b> / <b>C</b> 回避（無敵）
+    </p>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -43,6 +43,7 @@ const SKILLS = {
     recoveryMs: 300,
     damage: 10,
     guardDamage: 20, // ガードされたとき相手のガードゲージを削る量
+    blockedRecoveryMs: 200, // ガードされたとき攻撃側に加わる追加硬直 (ガードされた側が少し不利)
   },
   // ガード: 長押し中はゲージ減少 / 解除で回復 / 0でガードブレイク
   guard: {
@@ -107,6 +108,11 @@ const SKILL_KINDS = {
       if (defenderState === 'guard') {
         defender.guardGauge = Math.max(0, defender.guardGauge - skill.guardDamage);
         ctx.fx('block', defender);
+        // ガードされた攻撃側は追加で硬直する (弾かれ)
+        if (skill.blockedRecoveryMs) {
+          attacker.extendState(skill.blockedRecoveryMs);
+          ctx.fx('repelled', attacker);
+        }
         if (defender.guardGauge <= 0) ctx.breakGuard(defender);
         return;
       }
@@ -185,6 +191,13 @@ class Fighter {
     this.stateDuration = durationMs;
     this.stateEnd = durationMs > 0 ? now + durationMs : null;
     this.stateSkill = skill;
+  }
+
+  /** 現在の状態の終了時刻を延ばす (ガードされた硬直など) */
+  extendState(ms) {
+    if (this.stateEnd === null) return;
+    this.stateEnd += ms;
+    this.stateDuration += ms;
   }
 
   cooldownReady(skill, now) {

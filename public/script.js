@@ -69,6 +69,7 @@
   const floaters = []; // 浮かぶテキスト
   const particles = [];
   const flashUntil = { you: 0, opponent: 0 };
+  const repelledUntil = { you: 0, opponent: 0 }; // ガードされて弾かれている間
   let shake = 0;
 
   /* ------------------------------------------------------------------ *
@@ -129,6 +130,7 @@
     floaters.length = 0;
     particles.length = 0;
     flashUntil.you = flashUntil.opponent = 0;
+    repelledUntil.you = repelledUntil.opponent = 0;
     releaseAll();
     buildControls();
     hideOverlay();
@@ -275,6 +277,9 @@
       shake = Math.max(shake, 4);
       addFloater('BLOCK', x, y, '#6fe3ff', 26);
       burst(x + ARENA.DIR[side] * 38, y + 20, '#bff4ff', 10);
+    } else if (e.type === 'repelled') {
+      repelledUntil[side] = now + 500;
+      addFloater('弾かれた!', x, y - 10, '#c7a8ff', 24);
     } else if (e.type === 'dodge') {
       addFloater('DODGE', x, y, '#9dff9d', 26);
     } else if (e.type === 'guardBreak') {
@@ -457,6 +462,13 @@
             pose.sword = 1.1 - 0.5 * q; // 振り下ろし
             const since = t - w;
             if (since < 140) pose.slash = 1 - since / 140;
+            // ガードされた場合は後ろにのけぞる
+            if (now < repelledUntil[side]) {
+              pose.offsetX = -14 * Math.min(1, since / 150);
+              pose.lean = -0.18;
+              pose.sword = 0.2;
+              pose.slash = 0;
+            }
           }
         }
         break;
